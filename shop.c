@@ -5,46 +5,47 @@
 // gcc -o shop shop.c
 // shop.exe
 
-// A struct is used to group data together. 
-struct Product
+// A struct is used to group data together.
+ 
+struct Product // Product Struct
 {
-	char *name;	// *is a pointer that allow it to expland in memory
+	char *name;	     // *is a pointer that allow it to expland in memory
 	double price;	//  Double = decimal number
 };
 
-struct ProductStock
+struct ProductStock  // ProductStock Struct
 {
-	struct Product product;
+	struct Product product; // Nested Struct
 
 	int quantity;
 
 };
 
-struct Customer
+struct Customer // Customer Struct
 {
 	char *name;
 
 	double budget;
 
-	struct ProductStock shoppingList[10];
+	struct ProductStock shoppingList[10]; // Nested struct - Array
 
 	int index;
 
 };
 
-struct customerOrder
+struct customerOrder  // customerOrder Struct
 {
-	struct Customer name;
+	struct Customer name; // Nested struct
 
-	struct Product product;
+	struct Product product; // Nested struct
 
-	struct Customer budget;
+	struct Customer budget; // Nested struct
 
 	int quantity;
 
 };
 
-struct Shop
+struct Shop // Shop Struct
 {
 	double cash;
 
@@ -54,63 +55,65 @@ struct Shop
 
 };
 
-//Print the product information 
-void
-printProduct(struct Product p)
+
+void printProduct(struct Product p)
 {
+	//Print the product and price. 
 	printf("PRODUCT : %s \nPRICE   : %.2f\n", p.name, p.price);
 
 }
 
-//Print the product information 
-void
-printProduct2(struct Product p)
+void printProduct2(struct Product p)
 {
+	//Print the product only
 	printf("PRODUCT : %s  \n", p.name);
 
 }
 
-void
-
-printCustomer(struct Customer c, struct Shop s)	// Related to customer struct
+void printCustomer(struct Customer c, struct Shop s)	// Two Structs will be used 
 {
+	// Print customer name and budget
 	printf("CUSTOMER NAME: %s \nCUSTOMER BUDGET: %.2f\n", c.name, c.budget);
 
 	printf("------------------------------------\n");
 
+	// Set sum to equal zero
 	double sum = 0;
 
+	// Start loop of index 
 	for (int i = 0; i < c.index; i++)
 	{
+		// Print customers item list
 		printProduct2(c.shoppingList[i].product);
 
+		// Print how much of each item the customer wants
 		printf("Quantity: %d\n\n", c.shoppingList[i].quantity);
-
-		double cost =
-			c.shoppingList[i].quantity *c.shoppingList[i].product.price;
-
-		sum += cost;
+		
+		// Find total customer cost and store in Var total
+		double total = c.shoppingList[i].quantity *c.shoppingList[i].product.price;
+		sum = sum + total;
 
 	}
-
+	
+	// Print the total cost of the customer items
 	printf("TOTAL COST:\t%.2f\n", sum);
 
+	// Once all the customer items are added, minus from the budget
 	printf("BUDGET BALANCE:\t%.2f\n", c.budget - sum);
-
 }
 
-void
-
-printShop(struct Shop s)
+void printShop(struct Shop s) 
 {
 	printf("------------------------------------\n");
 
+	// Print the cash that is stored in the shop CSV file
 	printf("Shop has %.2f in cash\n", s.cash);
 
 	printf("------------------------------------\n");
 
 	printf("------------------------------------\n");
 
+	// For loop that displays the stock details (Item, Quantity, Cost)
 	for (int i = 0; i < s.index; i++)
 	{
 		printProduct(s.stock[i].product);
@@ -122,9 +125,7 @@ printShop(struct Shop s)
 	}
 }
 
-struct Customer
-
-cusOrder()
+struct Customer cusOrder()
 {
 	struct Customer customer = { 0 };
 
@@ -138,8 +139,10 @@ cusOrder()
 
 	char *array[10];
 
+	// Read the customer CSV
 	fp = fopen("orderRich.csv", "r");
 
+	// Error exception
 	if (fp == NULL)
 
 		exit(EXIT_FAILURE);
@@ -156,7 +159,7 @@ cusOrder()
 		{
 			char *arr = malloc(sizeof(char) *50);	//create a local token string variable
 
-			// Wont run without this 
+			// Wont run without this used stockoverflow to find solution
 			const char *stripNewline(char *textStr)
 			{
 				return textStr;
@@ -165,9 +168,7 @@ cusOrder()
 
 			// Value will be stored in r store in an array and keep look at line is NULL
 			strcpy(arr, stripNewline(r));
-
 			array[reset++] = arr;
-
 			r = strtok(NULL, ",");
 
 		}
@@ -176,7 +177,6 @@ cusOrder()
 		if (strstr(array[0], "Name") != NULL)
 		{
 			customer.name = array[1];
-
 		}
 
 		// The following IF will be used to display the users Budget from the CSV
@@ -185,9 +185,7 @@ cusOrder()
 		{
 			// Use alof to cobvert to a decimal
 			double budget = atof(array[1]);
-
 			customer.budget = budget;
-
 		}
 
 		// Use the else to display the contents under Name and Budget,
@@ -219,7 +217,6 @@ cusOrder()
 
 	// Return to the function
 	return customer;
-
 }
 
 // Read in the contents of the CSV file
@@ -245,6 +242,7 @@ createAndStockShop()
 	// Read in cash value from CSV file.
 	getline(&line, &len, fp);
 
+	// ATOF converts converts into a floating point numerical representation
 	double cash = atof(line);
 
 	struct Shop shop = { cash
@@ -253,13 +251,14 @@ createAndStockShop()
 	// Read the remainder of the CSV file and print to the screen
 	while ((read = getline(&line, &len, fp)) != -1)
 	{
-		// Used string tokeniser to update the CSV file with the shop amount I set
+		// Update the CSV file with the shop amount I set
+		// Used https://www.geeksforgeeks.org/strtok-strtok_r-functions-c-examples/ for help.
 		if (strstr(line, "Cash") != NULL)
 		{
 			char *n = strtok(line, ",");
 
 			char *c = strtok(NULL, ",");
-
+			// ATOF converts converts into a floating point numerical representation
 			double cash = atof(c);
 
 			shop.cash = cash;
@@ -274,35 +273,36 @@ createAndStockShop()
 			char *q = strtok(NULL, ",");
 
 			int quantity = atoi(q);
-
+			// ATOF converts converts into a floating point numerical representation
 			double price = atof(p);
 
 			char *name = malloc(sizeof(char) *50);
 
 			strcpy(name, n);
 
+			// Add name and price to product
 			struct Product product = { name,
 				price
 			};
 
+			// add product and quantity ro stockItem
 			struct ProductStock stockItem = { product,
 				quantity
 			};
-
+			
 			shop.stock[shop.index++] = stockItem;
-
 		}
 	}
 
+	// return to function
 	return shop;
-
 }
 
-void
-reviewOrder(struct Shop s, struct Customer c)
+void reviewOrder(struct Shop s, struct Customer c)
 {
 	printf("\n%s  ORDER Review \n\n%s");
 
+	// THis for loop will print the customers shopping list
 	for (int i = 0; i < c.index; i++)
 	{
 		printf("%3i. %s", i + 1, c.shoppingList[i].product.name);
@@ -312,7 +312,9 @@ reviewOrder(struct Shop s, struct Customer c)
 	}
 
 	printf("\n%s  Shop Stock Review \n\n%s");
-
+	
+	// This for loop will print the shops stock
+	// This will look at the customer order and dieplay if they have it or not
 	for (int i = 0; i < c.index; i++)
 	{
 		printf("%3i. %s", i + 1, s.stock[i].product.name);
@@ -322,9 +324,7 @@ reviewOrder(struct Shop s, struct Customer c)
 	}
 }
 
-void
-
-checkOrder(struct Shop s, struct Customer c)
+void checkOrder(struct Shop s, struct Customer c)
 {
 	for (int i = 0; i < c.index; i++)
 	{
