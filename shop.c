@@ -332,34 +332,38 @@ void checkOrder(struct Shop s, struct Customer c)
 
 		char *ord = malloc(sizeof(char) *50);
 
-		strcpy(ord, c.shoppingList[i].product.name);
+		// Copy string 
+		strcpy(ord, c.shoppingList[i].product.name); // https://www.tutorialspoint.com/c_standard_library/c_function_strcpy.htm
 
 		for (int i = 0; i < s.index; i++)
 		{
 			char *shop = malloc(sizeof(char) *50);
-
-			strcpy(shop, s.stock[i].product.name);
+			
+			// Copy String
+			strcpy(shop, s.stock[i].product.name); // https://www.tutorialspoint.com/c_standard_library/c_function_strcpy.htm
 
 			int sh;
 
+			// Check if the stock is in the shopList
+			// If True add else desplay error
 			if (strstr(ord, shop) != NULL)
 			{
 				curStock = 1;
-
 				printf("\nFound in shop:\t%s\n", shop);
 
 				int shopQuant = s.stock[i].quantity;
-
 				int cusQuant = c.shoppingList[i].quantity;
-
+				
+				// if the customer order is less than the shop quantity then display message
 				if (cusQuant < shopQuant)
 				{
-					printf("Adding %s to order\n", shop);
+					printf("In shop %s \n", shop);
 
 				}
+				// If greater then display error message
 				else
 				{
-					printf("ERROR: Stock insufficient on %s\n", shop);
+					printf("ERROR: Not enough stock on %s\n", shop);
 
 				}
 			}
@@ -378,43 +382,149 @@ void checkOrder(struct Shop s, struct Customer c)
 
 }
 
-void
-stockAndCashArranging(struct Shop s, struct Customer c)
+void stockAndCashArranging(struct Shop s, struct Customer c)
 {
-	printf("\n*********Updated Shop *************\n\n");
+	printf("\n********* Updated Shop *************\n\n");
 
 	double sum = 0;
 
 	int new = 0;
 
+	// THis for loop will compare the customer order with shop contents
+	// It will subtract the customer item value form store and add price to store 
 	for (int i = 0; i < c.index; i++)
 	{
 		char *shop = malloc(sizeof(char) *50);
-
 		strcpy(shop, s.stock[i].product.name);
 
-		double total =
-			(c.shoppingList[i].quantity *c.shoppingList[i].product.price);
-
-		sum += total;
-
+		// Get the total cost of product and add to store cash
+		double total =(c.shoppingList[i].quantity *c.shoppingList[i].product.price);
+		sum = sum + total;
+	
+		// Check if the shop and customer items are a match in the array
 		int shopQuant = s.stock[i].quantity;
-
 		int cusQuant = c.shoppingList[i].quantity;
 
+		// If statement that will subtract what the customer ordered from store stock and display on screen
+		// This will display a minus number is the customer order is more than what the shop has in stock
 		if (shopQuant = cusQuant)
 		{
 			new = s.stock[i].quantity - c.shoppingList[i].quantity;
-
 			printf("New Amount of %s is %d\n", shop, new);
-
 		}
 
-		printf("Current Total After Item Removal In The Shop : \t%.2f\n\n",
-			s.cash - sum);
+		// After the shop has subtracted the customer items, add the money received to the shop cash
+		printf("Current cash in the Shop is : \t%.2f\n\n",
+			s.cash + sum);
 
 	}
+	
 }
+
+void liveShop(struct Shop s, struct Customer c)
+{
+	printf("\n********* Live Shop *************\n\n");
+	
+	
+	char n[100];
+	char p[100];
+	int  b;
+	int  q;
+
+	   printf( "Please enter your name?:\n");
+	   gets( n );
+	   
+	   printf( "Please enter product? :");
+	   gets( p );
+	   
+	   printf("Enter your quntity: ");
+	   scanf("%d",&q); 
+	   
+	   printf("Enter your budget: ");
+	   scanf("%d",&b); 
+
+	for (int i = 0; i < c.index; i++)
+	{
+		short curStock = 0;
+
+		char *ord = malloc(sizeof(char) *50);
+
+		// Copy string 
+		strcpy(ord, p); // https://www.tutorialspoint.com/c_standard_library/c_function_strcpy.htm
+
+		for (int i = 0; i < s.index; i++)
+		{
+			char *shop = malloc(sizeof(char) *50);
+			
+			// Copy String
+			strcpy(shop, s.stock[i].product.name); // https://www.tutorialspoint.com/c_standard_library/c_function_strcpy.htm
+
+			int sh;
+		
+			// Check if the stock is in the shopList
+			// If True add else desplay error
+			if (strstr(ord, shop) != NULL)
+			{
+				curStock = 1;
+				printf("\nFound %s", shop);
+
+				int shopQuant = s.stock[i].quantity;		
+				
+				// if the customer order is less than the shop quantity then display message
+				if (q < shopQuant)
+				{
+					// Set sum to equal zero
+					double sum = 0;
+					
+					printf(" and the shops current Quantity is : %d. \nWe have enough to fill your order.", s.stock[i].quantity);
+					
+					// Find total customer cost and store in Var total
+					double total = q *c.shoppingList[i].product.price;
+					sum = sum + total;
+					
+					if (total > b)
+					{
+						printf("\nTotal cost of purchase is :\t%.2f", sum);
+						// Once all the customer items are added, minus from the budget
+						printf("\nSorry you do not have enough money for this and have a minus of  : \t%.2f\n", b - sum);
+					}
+					
+					else{
+						// Print the total cost of the customer items
+						printf("\nTotal cost of purchase is :\t%.2f\n", sum);
+						
+					}
+
+				}
+			
+				// If greater then display error message
+				else
+				{
+					printf(" but we do not have enough in stock. \nThe current Quantity in the shop is : %d\n\nPlease try again.\n", s.stock[i].quantity);
+
+					printf("------------------------------------\n");
+
+				}
+		
+			}
+			
+
+			//When reached the end of the shop list and the item was not found output
+			if (i == s.index - 1 &!curStock)
+			{
+				//shopping list item is not is shop
+				printf("\nNOT in shop:\t%s\n", ord);
+
+			}
+			
+		}
+	  return ;
+	}
+
+	return;
+
+}
+
 
 // Refereance https://cboard.cprogramming.com/c-programming/151734-[help]-menu-using-while-loop.html 
 // Helped with the menu creation
@@ -424,8 +534,7 @@ int input();
 
 void output(float);
 
-int
-main()
+int main()
 {
 	printf("\n*******Welcome to the Shop ********\n\n");
 
@@ -435,21 +544,23 @@ main()
 
 	float result;
 
-	int choice, num;
+	int choice, num;	  
+				   
 
 	do {
-		printf("\nPress 1 To View The Shops Contents\n");
+		printf("\n\nPress 1 To View The Shops Contents\n");
 
 		printf("Press 2 To View The Shop and Order Contents\n");
 
-		printf
-			("Press 3 To View The Customer Order Contents and Calculate Cost\n");
+		printf("Press 3 To View The Customer Order Contents and Calculate Cost\n");
 
 		printf("Press 4 To Confirm If Shop Has Your Order\n");
 
 		printf("Press 5 Updated Shop\n");
+		
+		printf("Press 6 To Use Live Shop Mode\n");
 
-		printf("Press 6 To Exit\n\n");
+		printf("Press 7 To Exit\n\n");
 
 		printf("Enter your choice : ");
 
@@ -502,7 +613,15 @@ main()
 
 				}
 
-			case 6:
+			case 6: // live shop mode
+
+				{
+					liveShop(shop, order);
+					break;
+					
+				}
+				
+			case 7:
 
 				{
 					return 0;
@@ -516,7 +635,7 @@ main()
 		}
 	}
 
-	while (choice != 7);
+	while (choice != 8);
 
 	return 0;
 
