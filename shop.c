@@ -5,8 +5,8 @@
 // gcc -o shop shop.c
 // shop.exe
 
+
 // A struct is used to group data together.
- 
 struct Product // Product Struct
 {
 	char *name;	     // *is a pointer that allow it to expland in memory
@@ -33,18 +33,6 @@ struct Customer // Customer Struct
 
 };
 
-struct customerOrder  // customerOrder Struct
-{
-	struct Customer name; // Nested struct
-
-	struct Product product; // Nested struct
-
-	struct Customer budget; // Nested struct
-
-	int quantity;
-
-};
-
 struct Shop // Shop Struct
 {
 	double cash;
@@ -59,7 +47,7 @@ struct Shop // Shop Struct
 void printProduct(struct Product p)
 {
 	//Print the product and price. 
-	printf("PRODUCT : %s \nPRICE   : %.2f\n", p.name, p.price);
+	printf(" PRODUCT : %s \n PRICE   : %.2f\n ", p.name, p.price);
 
 }
 
@@ -73,8 +61,8 @@ void printProduct2(struct Product p)
 void printCustomer(struct Customer c, struct Shop s)	// Two Structs will be used 
 {
 	// Print customer name and budget
-	printf("CUSTOMER NAME: %s \nCUSTOMER BUDGET: %.2f\n", c.name, c.budget);
-
+	printf("\nCUSTOMER NAME   : %s \nCUSTOMER BUDGET : %.2f\n", c.name, c.budget);
+	printf("------------------------------------\n");
 	printf("------------------------------------\n");
 
 	// Set sum to equal zero
@@ -83,23 +71,37 @@ void printCustomer(struct Customer c, struct Shop s)	// Two Structs will be used
 	// Start loop of index 
 	for (int i = 0; i < c.index; i++)
 	{
+		int shopQuant = s.stock[i].quantity;
+		int cusQuant = c.shoppingList[i].quantity;
+			
 		// Print customers item list
 		printProduct2(c.shoppingList[i].product);
 
 		// Print how much of each item the customer wants
-		printf("Quantity: %d\n\n", c.shoppingList[i].quantity);
+		printf("QUANTITY: %d\n\n", c.shoppingList[i].quantity);
 		
+		// if the customer order is less than the shop quantity then display message
+		// Used this if else to eliminate adding a project that the shop didnt have enough quantity of
+		if (cusQuant > shopQuant)
+		{
+			printf("NOT ENOUGH IN SHOP\n");
+		}
+		
+		else{	
 		// Find total customer cost and store in Var total
 		double total = c.shoppingList[i].quantity *c.shoppingList[i].product.price;
 		sum = sum + total;
+		}
+		
+		printf("------------------------------------\n");
 
 	}
 	
 	// Print the total cost of the customer items
-	printf("TOTAL COST:\t%.2f\n", sum);
+	printf("TOTAL COST     = %.2f\n", sum);
 
 	// Once all the customer items are added, minus from the budget
-	printf("BUDGET BALANCE:\t%.2f\n", c.budget - sum);
+	printf("BUDGET BALANCE = %.2f\n", c.budget - sum);
 }
 
 void printShop(struct Shop s) 
@@ -107,7 +109,7 @@ void printShop(struct Shop s)
 	printf("------------------------------------\n");
 
 	// Print the cash that is stored in the shop CSV file
-	printf("Shop has %.2f in cash\n", s.cash);
+	printf("SHOP HAS %.2f in cash\n", s.cash);
 
 	printf("------------------------------------\n");
 
@@ -118,7 +120,7 @@ void printShop(struct Shop s)
 	{
 		printProduct(s.stock[i].product);
 
-		printf("Quantity: %d\n", s.stock[i].quantity);
+		printf("QUANTITY: %d\n", s.stock[i].quantity);
 
 		printf("------------------------------------\n");
 
@@ -148,14 +150,13 @@ struct Customer cusOrder()
 		exit(EXIT_FAILURE);
 
 	// Idea to completed this helped with the use of https://stackoverflow.com/questions/32884789/import-csv-into-an-array-using-c
-
 	// Read the Order CSV File
 	while ((read = getline(&line, &len, fp)) != -1)
 	{
 		int reset = 0;
 
 		char *r = strtok(line, ",");	// Read until comman is found and the result is NULL
-		while (r != NULL)
+		while (r != NULL)               // When not null continue into the while loop
 		{
 			char *arr = malloc(sizeof(char) *50);	//create a local token string variable
 
@@ -163,14 +164,12 @@ struct Customer cusOrder()
 			const char *stripNewline(char *textStr)
 			{
 				return textStr;
-
 			}
 
 			// Value will be stored in r store in an array and keep look at line is NULL
 			strcpy(arr, stripNewline(r));
 			array[reset++] = arr;
 			r = strtok(NULL, ",");
-
 		}
 
 		// The following IF will be used to display the users name from the CSV
@@ -200,9 +199,7 @@ struct Customer cusOrder()
 			double cost = atof(array[1]);
 
 			//char product = (array[0]);
-			struct Product p = { array[0],
-				cost
-			};
+			struct Product p = { array[0],cost};
 
 			// Add to the shopping list
 			struct ProductStock shopList = { p,
@@ -211,17 +208,14 @@ struct Customer cusOrder()
 
 			//Update the customer shoppinglist
 			customer.shoppingList[customer.index++] = shopList;
-
 		}
 	}
-
 	// Return to the function
 	return customer;
 }
 
 // Read in the contents of the CSV file
-struct Shop
-createAndStockShop()
+struct Shop createAndStockShop()
 {
 	FILE * fp;
 
@@ -300,27 +294,29 @@ createAndStockShop()
 
 void reviewOrder(struct Shop s, struct Customer c)
 {
-	printf("\n%s  ORDER Review \n\n%s");
+	printf("\n  CUSTOMER ORDER REVIEW \n");
+	printf("------------------------------------\n");
+	printf("------------------------------------\n");
 
 	// THis for loop will print the customers shopping list
 	for (int i = 0; i < c.index; i++)
 	{
-		printf("%3i. %s", i + 1, c.shoppingList[i].product.name);
-
+		printf("%3i. %s", i, c.shoppingList[i].product.name);
 		printf(" Quantity = %d\n", c.shoppingList[i].quantity);
-
+		printf("------------------------------------\n");
 	}
 
-	printf("\n%s  Shop Stock Review \n\n%s");
+	printf("\n\n\n  SHOP STOCK REVIEW \n");
+	printf("------------------------------------\n");
+	printf("------------------------------------\n");
 	
 	// This for loop will print the shops stock
 	// This will look at the customer order and dieplay if they have it or not
 	for (int i = 0; i < c.index; i++)
 	{
-		printf("%3i. %s", i + 1, s.stock[i].product.name);
-
-		printf(" Quantity = %d\n", s.stock[i].quantity);
-
+		printf("%3i. %s", i, s.stock[i].product.name);
+		printf(" QUANTITY = %d\n", s.stock[i].quantity);
+		printf("------------------------------------\n");
 	}
 }
 
@@ -349,7 +345,7 @@ void checkOrder(struct Shop s, struct Customer c)
 			if (strstr(ord, shop) != NULL)
 			{
 				curStock = 1;
-				printf("\nFound in shop:\t%s\n", shop);
+				printf("\nITEM FOUND IN SHOP:%s\n", shop);
 
 				int shopQuant = s.stock[i].quantity;
 				int cusQuant = c.shoppingList[i].quantity;
@@ -357,23 +353,21 @@ void checkOrder(struct Shop s, struct Customer c)
 				// if the customer order is less than the shop quantity then display message
 				if (cusQuant < shopQuant)
 				{
-					printf("In shop %s \n", shop);
-
+					printf("ITEM ADDED\n");
 				}
+				
 				// If greater then display error message
 				else
 				{
-					printf("ERROR: Not enough stock on %s\n", shop);
-
+					printf("NOT ENOUGH %s IN SHOP\n", shop);
 				}
 			}
-
+			
 			//reached the end of the list and item was not found
 			if (i == s.index - 1 &!curStock)
 			{
 				//shopping list item is not is shop
-				printf("\nNOT in shop:\t%s\n", ord);
-
+				printf("\nITEM NOT FOUND IN SHOP:\t%s\n", ord);
 			}
 		}
 	}
@@ -387,15 +381,15 @@ void stockAndCashArranging(struct Shop s, struct Customer c)
 	printf("\n********* Updated Shop *************\n\n");
 
 	double sum = 0;
-
 	int new = 0;
 
-	// THis for loop will compare the customer order with shop contents
+	// This for loop will compare the customer order with shop contents
 	// It will subtract the customer item value form store and add price to store 
 	for (int i = 0; i < c.index; i++)
 	{
-		char *shop = malloc(sizeof(char) *50);
+		char *shop = malloc(sizeof(char) *50); 
 		strcpy(shop, s.stock[i].product.name);
+
 
 		// Get the total cost of product and add to store cash
 		double total =(c.shoppingList[i].quantity *c.shoppingList[i].product.price);
@@ -405,18 +399,23 @@ void stockAndCashArranging(struct Shop s, struct Customer c)
 		int shopQuant = s.stock[i].quantity;
 		int cusQuant = c.shoppingList[i].quantity;
 
+		// if the customer order is less than the shop quantity then display message
+		// Used this if else to eliminate adding a project that the shop didnt have enough quantity of
+		if (cusQuant>shopQuant)
+		{
+			printf("NOT ENOUGH %s IN SHOP\n", shop);
+		}	
 		// If statement that will subtract what the customer ordered from store stock and display on screen
 		// This will display a minus number is the customer order is more than what the shop has in stock
-		if (shopQuant = cusQuant)
+		else
 		{
 			new = s.stock[i].quantity - c.shoppingList[i].quantity;
-			printf("New Amount of %s is %d\n", shop, new);
-		}
-
-		// After the shop has subtracted the customer items, add the money received to the shop cash
-		printf("Current cash in the Shop is : \t%.2f\n\n",
+			printf("NEW AMOUNT OF %s IS %d\n", shop, new);
+			
+			// After the shop has subtracted the customer items, add the money received to the shop cash
+			printf("CURRENT CASH IN SHOP IS : %.2f\n\n",
 			s.cash + sum);
-
+		}
 	}
 	
 }
@@ -425,23 +424,36 @@ void liveShop(struct Shop s, struct Customer c)
 {
 	printf("\n********* Live Shop *************\n\n");
 	
-	
 	char n[100];
 	char p[100];
 	int  b;
 	int  q;
+	char ch;
+	
+	printf("\n  Shop Stock Review \n\n");
+	
+	// For loop that displays the stock details (Item, Cost)
+	for (int i = 0; i < s.index; i++)
+	{
+		printProduct(s.stock[i].product);
+		
+		printf("------------------------------------\n");
 
-	   printf( "Please enter your name?:\n");
+	}
+
+	   printf( "\nWELCOME TO LIVE MODE:\n");
 	   gets( n );
 	   
-	   printf( "Please enter product? :");
+	   printf( "\nENTER PRODUCT :");
 	   gets( p );
 	   
-	   printf("Enter your quntity: ");
+	   printf("ENTER QUANTITY : ");
 	   scanf("%d",&q); 
 	   
-	   printf("Enter your budget: ");
+	   printf("ENTER BUDGET   : ");
 	   scanf("%d",&b); 
+	   
+	   printf("------------------------------------\n");
 
 	for (int i = 0; i < c.index; i++)
 	{
@@ -466,7 +478,7 @@ void liveShop(struct Shop s, struct Customer c)
 			if (strstr(ord, shop) != NULL)
 			{
 				curStock = 1;
-				printf("\nFound %s", shop);
+				printf("\n * FOUND %s IN SHOP", shop);
 
 				int shopQuant = s.stock[i].quantity;		
 				
@@ -476,7 +488,7 @@ void liveShop(struct Shop s, struct Customer c)
 					// Set sum to equal zero
 					double sum = 0;
 					
-					printf(" and the shops current Quantity is : %d. \nWe have enough to fill your order.", s.stock[i].quantity);
+					printf(" and the shops current Quantity is : %d. \n * We have enough to fill your order.", s.stock[i].quantity);
 					
 					// Find total customer cost and store in Var total
 					double total = q *c.shoppingList[i].product.price;
@@ -484,47 +496,58 @@ void liveShop(struct Shop s, struct Customer c)
 					
 					if (total > b)
 					{
-						printf("\nTotal cost of purchase is :\t%.2f", sum);
+						printf("\n * TOTAL COST OF PURCHASE IS :%.2f", sum);
 						// Once all the customer items are added, minus from the budget
-						printf("\nSorry you do not have enough money for this and have a minus of  : \t%.2f\n", b - sum);
+						printf("\n * SORRY YOU ARE IN A MINUS DO NOT HAVE ENOUGH MONEY :  %.2f\n", b - sum);
+						
+						printf("\nLIVE MODE FINISHED\n");
+						printf("------------------------------------\n");
 					}
 					
 					else{
+						int new = 0;
 						// Print the total cost of the customer items
-						printf("\nTotal cost of purchase is :\t%.2f\n", sum);
+						printf("\n * TOTAL COST OF PURCHASE IS :%.2f\n", sum);
 						
+						// Subtract the required quantity from the shop and print 
+						new = s.stock[i].quantity - q;
+						printf(" * New SHOP STOCK OF %s IS %d\n", shop, new);
+						
+						// After the shop has subtracted the customer items, add the money received to the shop cash
+						printf(" * CURRENT CASH IN SHOP IS : %.2f\n\n", s.cash + sum);
+						
+						printf("\nLIVE MODE FINISHED\n");
+						printf("------------------------------------\n");
+		
 					}
-
 				}
 			
 				// If greater then display error message
 				else
 				{
-					printf(" but we do not have enough in stock. \nThe current Quantity in the shop is : %d\n\nPlease try again.\n", s.stock[i].quantity);
+					printf(" BUT WE DO NOT HAVE ENOUGH IN STOCK. \n * THE CURRENT QUANTITY IN THE SHOP IS : %D\n\nPLEASE TRY AGAIN.\n", s.stock[i].quantity);
 
 					printf("------------------------------------\n");
 
 				}
+			 return;
 		
 			}
-			
-
 			//When reached the end of the shop list and the item was not found output
 			if (i == s.index - 1 &!curStock)
 			{
 				//shopping list item is not is shop
-				printf("\nNOT in shop:\t%s\n", ord);
-
+				printf("\nSorry but the product %s was not found in the shop.\n", ord);
+				
+				printf("\nLIVE MODE FINISHED\n");
+			    printf("------------------------------------\n");
 			}
-			
 		}
-	  return ;
+		return;
+	  
 	}
-
 	return;
-
 }
-
 
 // Refereance https://cboard.cprogramming.com/c-programming/151734-[help]-menu-using-while-loop.html 
 // Helped with the menu creation
@@ -536,7 +559,7 @@ void output(float);
 
 int main()
 {
-	printf("\n*******Welcome to the Shop ********\n\n");
+	printf("\n\n\n******* WELCOME TO THE SHOP ********\n");
 
 	struct Shop shop = createAndStockShop();
 
@@ -548,21 +571,23 @@ int main()
 				   
 
 	do {
-		printf("\n\nPress 1 To View The Shops Contents\n");
-
-		printf("Press 2 To View The Shop and Order Contents\n");
-
-		printf("Press 3 To View The Customer Order Contents and Calculate Cost\n");
-
-		printf("Press 4 To Confirm If Shop Has Your Order\n");
-
-		printf("Press 5 Updated Shop\n");
+		printf("\n\nPLEASE SELECT ONE OF THE FOLLOWING OPTIONS");
 		
-		printf("Press 6 To Use Live Shop Mode\n");
+		printf("\n\n * PRESS 1 TO VIEW THE SHOPS CONTENTS\n");
 
-		printf("Press 7 To Exit\n\n");
+		printf(" * PRESS 2 TO VIEW THE SHOP AND ORDER CONTENTS\n");
 
-		printf("Enter your choice : ");
+		printf(" * PRESS 3 TO VIEW THE CUSTOMER ORDER CONTENTS AND CALCULATE COST\n");
+
+		printf(" * PRESS 4 TO CONFIRM IF SHOP HAS YOUR ORDER\n");
+
+		printf(" * PRESS 5 UPDATED SHOP\n");
+		
+		printf(" * PRESS 6 TO USE LIVE SHOP MODE\n");
+
+		printf(" * PRESS 7 TO EXIT\n\n");
+
+		printf("ENTER YOUR CHOICE : ");
 
 		choice = input();
 
@@ -572,45 +597,35 @@ int main()
 
 				{
 					printShop(shop);
-
 					break;
-
 				}
 
 			case 2:
 
 				{
 					reviewOrder(shop, order);
-
 					break;
-
 				}
 
 			case 3:
 
 				{
 					printCustomer(order, shop);
-
 					break;
-
 				}
 
 			case 4:
 
 				{
 					checkOrder(shop, order);
-
 					break;
-
 				}
 
 			case 5:
 
 				{
 					stockAndCashArranging(shop, order);
-
 					break;
-
 				}
 
 			case 6: // live shop mode
@@ -618,36 +633,28 @@ int main()
 				{
 					liveShop(shop, order);
 					break;
-					
 				}
 				
 			case 7:
 
 				{
 					return 0;
-
 				}
 
 			default:
 
-				printf("wrong Input, try again\\n");
+				printf("WRONG INPUT, TRY AGAIN\\n");
 
 		}
 	}
 
 	while (choice != 8);
-
 	return 0;
-
 }
 
-int
-input()
+int input()
 {
 	int number;
-
 	scanf("%d", &number);
-
 	return (number);
-
 }
